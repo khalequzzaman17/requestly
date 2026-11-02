@@ -80,7 +80,10 @@ public final class WorkspaceViewModel: ObservableObject {
     }
     
     public func newTab() {
-        let newTab = WorkspaceTab(request: HTTPRequestModel(name: "New Request"))
+        let settings = try? databaseService.loadSettings()
+        let defaultMethod = settings?.defaultMethod ?? "GET"
+        let method = HTTPMethod(rawValue: defaultMethod) ?? .get
+        let newTab = WorkspaceTab(request: HTTPRequestModel(name: "New Request", method: method))
         tabs.append(newTab)
         activeTabId = newTab.id
         updateActiveViewModels()
@@ -202,5 +205,13 @@ public final class WorkspaceViewModel: ObservableObject {
         let saved = SavedRequestModel(collectionId: coll.id, request: req)
         try? databaseService.saveRequest(saved)
         sidebarViewModel.loadData()
+    }
+    
+    public func copyActiveRequestCurl() {
+        guard let editorVM = activeEditorViewModel else { return }
+        let curl = CurlParserAndExporter.shared.export(request: editorVM.request)
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(curl, forType: .string)
     }
 }

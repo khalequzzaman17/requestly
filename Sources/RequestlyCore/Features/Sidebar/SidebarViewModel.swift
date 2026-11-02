@@ -23,6 +23,8 @@ public final class SidebarViewModel: ObservableObject {
     @Published public var showNewFolderSheet: Bool = false
     @Published public var targetCollectionForFolder: CollectionModel? = nil
     @Published public var newFolderName: String = ""
+    @Published public var showClearConfirmDialog: Bool = false
+    @Published public var clearSuccessMessage: String? = nil
     
     private let databaseService: DatabaseServiceProtocol
     
@@ -36,6 +38,12 @@ public final class SidebarViewModel: ObservableObject {
     public init(databaseService: DatabaseServiceProtocol = DatabaseService.shared) {
         self.databaseService = databaseService
         loadData()
+        
+        NotificationCenter.default.addObserver(forName: .historyCleared, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                self?.loadHistory()
+            }
+        }
     }
     
     public func loadData() {
@@ -106,8 +114,21 @@ public final class SidebarViewModel: ObservableObject {
         loadData()
     }
     
+    public func loadHistory() {
+        if let items = try? databaseService.fetchHistory(limit: 100) {
+            self.historyItems = items
+        } else {
+            self.historyItems = []
+        }
+    }
+    
     public func clearHistory() {
         try? databaseService.clearHistory()
         self.historyItems = []
+        self.clearSuccessMessage = "Request history cleared"
+        NotificationCenter.default.post(name: .historyCleared, object: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+            self?.clearSuccessMessage = nil
+        }
     }
 }

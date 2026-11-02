@@ -34,11 +34,17 @@ public struct ImportModalView: View {
                     .font(AppTypography.headline)
                     .foregroundColor(DarkTheme.textPrimary)
                 Spacer()
-                Button("Close") {
+                Button(action: {
                     dismiss()
+                }) {
+                    Text("Close")
+                        .font(AppTypography.captionMedium)
+                        .foregroundColor(DarkTheme.textPrimary)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 5)
+                        .background(DarkTheme.elevatedBackground)
+                        .cornerRadius(6)
                 }
-                .font(AppTypography.captionMedium)
-                .foregroundColor(DarkTheme.textSecondary)
                 .buttonStyle(.plain)
             }
             .padding(.horizontal, 16)

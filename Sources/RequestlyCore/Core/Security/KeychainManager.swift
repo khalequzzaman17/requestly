@@ -23,7 +23,7 @@ public enum KeychainError: LocalizedError {
 
 public final class KeychainManager: KeychainServiceProtocol, @unchecked Sendable {
     public static let shared = KeychainManager()
-    private let service = "com.requestly.macos.keychain"
+    private let service = "com.requestly.sysninja.keychain"
     
     public init() {}
     

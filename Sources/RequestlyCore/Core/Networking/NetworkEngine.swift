@@ -77,9 +77,22 @@ public final class NetworkEngine: NetworkServiceProtocol, @unchecked Sendable {
         urlRequest.httpMethod = request.method.rawValue
         urlRequest.timeoutInterval = request.timeoutInterval
         
+        let settings = try? DatabaseService.shared.loadSettings()
+        let trimWhitespace = settings?.trimWhitespaceInHeaders ?? true
+        
         // Apply Headers
-        for header in request.headers where header.isEnabled && !header.key.trimmingCharacters(in: .whitespaces).isEmpty {
-            urlRequest.setValue(header.value, forHTTPHeaderField: header.key)
+        for header in request.headers where header.isEnabled {
+            let key = trimWhitespace ? header.key.trimmingCharacters(in: .whitespacesAndNewlines) : header.key
+            let val = trimWhitespace ? header.value.trimmingCharacters(in: .whitespacesAndNewlines) : header.value
+            if !key.isEmpty {
+                urlRequest.setValue(val, forHTTPHeaderField: key)
+            }
+        }
+        
+        // Apply Default/Custom User-Agent if not explicitly specified in headers
+        if urlRequest.value(forHTTPHeaderField: "User-Agent") == nil {
+            let userAgent = settings?.customUserAgent.isEmpty == false ? (settings?.customUserAgent ?? "Requestly/1.0 (macOS; Universal)") : "Requestly/1.0 (macOS; Universal)"
+            urlRequest.setValue(userAgent, forHTTPHeaderField: "User-Agent")
         }
         
         // Apply Authentication

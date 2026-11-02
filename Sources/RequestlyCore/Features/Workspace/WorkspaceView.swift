@@ -135,10 +135,55 @@ public struct WorkspaceView: View {
         }
         .background(DarkTheme.mainBackground)
         .forceDarkMode()
-        // Keyboard Shortcuts
-        .keyboardShortcut("n", modifiers: [.command])
-        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("NewRequestShortcut"))) { _ in
+        // Hidden View-Level Keyboard Shortcuts (Guarantees responsiveness even during field focus)
+        .background(
+            Group {
+                Button("") { viewModel.newTab() }
+                    .keyboardShortcut("n", modifiers: .command)
+                Button("") { viewModel.newTab() }
+                    .keyboardShortcut("t", modifiers: .command)
+                Button("") { viewModel.closeTab(id: viewModel.activeTabId) }
+                    .keyboardShortcut("w", modifiers: .command)
+                Button("") { viewModel.executeActiveRequest() }
+                    .keyboardShortcut(.return, modifiers: .command)
+                Button("") { viewModel.cancelActiveRequest() }
+                    .keyboardShortcut(".", modifiers: .command)
+                Button("") { viewModel.saveActiveRequest() }
+                    .keyboardShortcut("s", modifiers: .command)
+                Button("") { viewModel.copyActiveRequestCurl() }
+                    .keyboardShortcut("c", modifiers: [.command, .option])
+                Button("") { viewModel.showCommandPalette.toggle() }
+                    .keyboardShortcut("k", modifiers: .command)
+                Button("") { viewModel.showSettingsSheet = true }
+                    .keyboardShortcut(",", modifiers: .command)
+            }
+            .opacity(0)
+            .allowsHitTesting(false)
+        )
+        // Notification-based shortcuts from macOS menu items
+        .onReceive(NotificationCenter.default.publisher(for: .newRequestShortcut)) { _ in
             viewModel.newTab()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .newTabShortcut)) { _ in
+            viewModel.newTab()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .closeTabShortcut)) { _ in
+            viewModel.closeTab(id: viewModel.activeTabId)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .sendRequestShortcut)) { _ in
+            viewModel.executeActiveRequest()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .cancelRequestShortcut)) { _ in
+            viewModel.cancelActiveRequest()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .saveRequestShortcut)) { _ in
+            viewModel.saveActiveRequest()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .copyCurlShortcut)) { _ in
+            viewModel.copyActiveRequestCurl()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .commandPaletteShortcut)) { _ in
+            viewModel.showCommandPalette.toggle()
         }
         // Modals & Sheets
         .sheet(isPresented: $viewModel.showEnvironmentsSheet) {

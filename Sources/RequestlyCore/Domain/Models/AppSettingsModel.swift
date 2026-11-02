@@ -1,6 +1,14 @@
 import Foundation
 
 public struct AppSettingsModel: Codable, Equatable {
+    // General Settings
+    public var defaultMethod: String
+    public var confirmCloseDirtyTabs: Bool
+    public var saveToHistoryAutomatically: Bool
+    public var playCompletionSound: Bool
+    public var launchAtLogin: Bool
+    public var trimWhitespaceInHeaders: Bool
+    
     // Network Settings
     public var defaultTimeout: TimeInterval
     public var followRedirects: Bool
@@ -24,6 +32,12 @@ public struct AppSettingsModel: Codable, Equatable {
     public var maxHistoryItems: Int
     
     public init(
+        defaultMethod: String = "GET",
+        confirmCloseDirtyTabs: Bool = true,
+        saveToHistoryAutomatically: Bool = true,
+        playCompletionSound: Bool = false,
+        launchAtLogin: Bool = false,
+        trimWhitespaceInHeaders: Bool = true,
         defaultTimeout: TimeInterval = 30.0,
         followRedirects: Bool = true,
         validateSSL: Bool = true,
@@ -39,6 +53,12 @@ public struct AppSettingsModel: Codable, Equatable {
         historyRetentionDays: Int = 30,
         maxHistoryItems: Int = 500
     ) {
+        self.defaultMethod = defaultMethod
+        self.confirmCloseDirtyTabs = confirmCloseDirtyTabs
+        self.saveToHistoryAutomatically = saveToHistoryAutomatically
+        self.playCompletionSound = playCompletionSound
+        self.launchAtLogin = launchAtLogin
+        self.trimWhitespaceInHeaders = trimWhitespaceInHeaders
         self.defaultTimeout = defaultTimeout
         self.followRedirects = followRedirects
         self.validateSSL = validateSSL

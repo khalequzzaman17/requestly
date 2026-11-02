@@ -1,4 +1,5 @@
 import Foundation
+import AppKit
 
 public final class VariableResolutionUseCase: EnvironmentResolverProtocol {
     public static let shared = VariableResolutionUseCase()
@@ -107,18 +108,27 @@ public final class ExecuteRequestUseCase {
         let resolvedRequest = variableResolver.resolve(request: request, in: environment)
         let response = try await networkEngine.execute(request: resolvedRequest)
         
-        let historyItem = RequestHistoryItem(
-            requestName: request.name,
-            method: request.method,
-            url: resolvedRequest.url,
-            statusCode: response.statusCode,
-            statusDescription: response.statusDescription,
-            durationMs: response.durationMs,
-            byteCount: response.byteCount,
-            timestamp: Date(),
-            requestSnapshot: request
-        )
-        try? databaseService.addHistoryItem(historyItem)
+        let settings = try? databaseService.loadSettings()
+        let shouldSaveHistory = settings?.saveToHistoryAutomatically ?? true
+        
+        if shouldSaveHistory {
+            let historyItem = RequestHistoryItem(
+                requestName: request.name,
+                method: request.method,
+                url: resolvedRequest.url,
+                statusCode: response.statusCode,
+                statusDescription: response.statusDescription,
+                durationMs: response.durationMs,
+                byteCount: response.byteCount,
+                timestamp: Date(),
+                requestSnapshot: request
+            )
+            try? databaseService.addHistoryItem(historyItem)
+        }
+        
+        if settings?.playCompletionSound == true {
+            NSSound.beep()
+        }
         
         return response
     }

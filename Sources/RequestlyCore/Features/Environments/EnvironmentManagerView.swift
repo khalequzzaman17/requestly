@@ -92,12 +92,22 @@ public struct EnvironmentManagerView: View {
                     .font(AppTypography.headline)
                     .foregroundColor(DarkTheme.textPrimary)
                 Spacer()
-                Button("Done") {
+                Button(action: {
                     viewModel.saveSelectedEnvironment()
                     dismiss()
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 11, weight: .bold))
+                        Text("Done")
+                            .font(AppTypography.captionMedium)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 6)
+                    .background(DarkTheme.primaryBlue)
+                    .cornerRadius(6)
                 }
-                .font(AppTypography.captionMedium)
-                .foregroundColor(DarkTheme.primaryBlue)
                 .buttonStyle(.plain)
             }
             .padding(.horizontal, 16)

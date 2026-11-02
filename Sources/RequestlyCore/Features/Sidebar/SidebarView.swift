@@ -174,7 +174,7 @@ public struct SidebarView: View {
                         Spacer()
                         if !viewModel.historyItems.isEmpty {
                             Button("Clear") {
-                                viewModel.clearHistory()
+                                viewModel.showClearConfirmDialog = true
                             }
                             .font(AppTypography.caption)
                             .foregroundColor(DarkTheme.errorRed)
@@ -183,6 +183,22 @@ public struct SidebarView: View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
+                    
+                    if let msg = viewModel.clearSuccessMessage {
+                        HStack(spacing: 6) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(DarkTheme.successGreen)
+                                .font(.system(size: 11))
+                            Text(msg)
+                                .font(AppTypography.caption)
+                                .foregroundColor(DarkTheme.successGreen)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 6)
+                        .background(DarkTheme.successGreen.opacity(0.12))
+                        .transition(.opacity)
+                    }
                     
                     ScrollView {
                         LazyVStack(alignment: .leading, spacing: 2) {
@@ -285,6 +301,14 @@ public struct SidebarView: View {
         .frame(minWidth: 240, idealWidth: 280, maxWidth: 360)
         .background(DarkTheme.sidebarBackground)
         // Sheets
+        .alert("Clear Request History?", isPresented: $viewModel.showClearConfirmDialog) {
+            Button("Cancel", role: .cancel) {}
+            Button("Clear History", role: .destructive) {
+                viewModel.clearHistory()
+            }
+        } message: {
+            Text("Are you sure you want to clear your entire request history? This action cannot be undone.")
+        }
         .sheet(isPresented: $viewModel.showNewCollectionSheet) {
             VStack(spacing: 14) {
                 Text("Create New Collection")
