@@ -15,10 +15,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			RkdLSbe7UT/n4CC/UvvsEiVtR8s=
+			s5T3K/Npa0kIxaxAOAR6ix6WQZ8=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"46474b49b7bb513fe7e020bf52fbec12256d47cb" or cdhash H"7bf52be482e5d6e36ea999a54ff6d3015b309845"</string>
+			<string>cdhash H"b394f72bf3696b4908c5ac4038047a8b1e96419f" or cdhash H"8c2e0ee0a6acfd84d6577a2cffb817e337f01129"</string>
 		</dict>
 		<key>Resources/AppIcon.icns</key>
 		<dict>
