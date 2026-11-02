@@ -1,8 +1,35 @@
+# macOS System Files
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Xcode & Swift Package Manager
 .build/
-build/test/
+DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcuserdatad
+
+# Swift Compiler Artifacts & Diagnostics
 *.swiftdoc
 *.swiftmodule
-*.dSYM
+*.swiftsourceinfo
+*.abi.json
+*.dSYM/
 test-runner
 
+# Build Intermediates & Test Staging
+build/test/
+build/dmg_staging/
+build/tmp*/
+build/**/tmp_*
+
+# Local Environment & Sensitive Keys
+.env
+.env.local
+*.pem
+*.key
