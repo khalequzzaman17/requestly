@@ -30,3 +30,4 @@ Requestly is designed as a local-first, privacy-focused native developer tool.
   xcrun notarytool submit build/Requestly-Universal.dmg --keychain-profile "PROFILE_NAME" --wait
   xcrun stapler staple build/Requestly-Universal.dmg
   ```
+

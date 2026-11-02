@@ -4,6 +4,8 @@
 <dict>
     <key>CFBundleExecutable</key>
     <string>Requestly</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
     <string>com.requestly.macos</string>
     <key>CFBundleName</key>
@@ -31,4 +33,3 @@
     <string>Copyright © 2026 Requestly. All rights reserved.</string>
 </dict>
 </plist>
-

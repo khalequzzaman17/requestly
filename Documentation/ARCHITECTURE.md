@@ -66,3 +66,4 @@ The application is enforced into macOS dark appearance regardless of the system 
 - Pretty is the default tab for valid JSON.
 - Formats with 2 spaces by default.
 - Collapsible tree view (`JSONTreeNode`) provides deep object/array folding, type badges, line numbers, search filtering, and copy/download controls.
+

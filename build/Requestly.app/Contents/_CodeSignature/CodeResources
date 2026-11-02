@@ -3,7 +3,12 @@
 <plist version="1.0">
 <dict>
 	<key>files</key>
-	<dict/>
+	<dict>
+		<key>Resources/AppIcon.icns</key>
+		<data>
+		auAX0BSndpQbtjD5bSPRxGytF8U=
+		</data>
+	</dict>
 	<key>files2</key>
 	<dict>
 		<key>Frameworks/RequestlyCore.abi.json</key>
@@ -37,19 +42,26 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			FPwzlyNl8Xt5gX91WBXwy5HY9RA=
+			9xGTty1Nzr5uot2fmIMLUxLuOCU=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"14fc33972365f17b79817f755815f0cb91d8f510"</string>
+			<string>cdhash H"f71193b72d4dcebe6ea2dd9f98830b5312ee3825"</string>
 		</dict>
 		<key>Frameworks/libRequestlyCore.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			c2ySgiA285fJYVR49ylfBnLbv70=
+			lkRGKE1fTpZRZgrIwGhVV1ik6m4=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"736c92822036f397c9615478f7295f0672dbbfbd"</string>
+			<string>cdhash H"964446284d5f4e9651660ac8c068555758a4ea6e"</string>
+		</dict>
+		<key>Resources/AppIcon.icns</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			PC5W5kkXjfhMVbccb65pDslRFhIWpifK0VpUotEQoYM=
+			</data>
 		</dict>
 	</dict>
 	<key>rules</key>

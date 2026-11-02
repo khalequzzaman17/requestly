@@ -3,17 +3,29 @@
 <plist version="1.0">
 <dict>
 	<key>files</key>
-	<dict/>
+	<dict>
+		<key>Resources/AppIcon.icns</key>
+		<data>
+		auAX0BSndpQbtjD5bSPRxGytF8U=
+		</data>
+	</dict>
 	<key>files2</key>
 	<dict>
 		<key>Frameworks/libRequestlyCore.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			bn8UbUKyFL3oaLL+MK9CwEiiU0g=
+			7kj43d8EcPOOk9wSIFzN7BgQu3E=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"6e7f146d42b214bde868b2fe30af42c048a25348" or cdhash H"14aaac634e59d809388fe8c3411a0b5749c61e8e"</string>
+			<string>cdhash H"ee48f8dddf0470f38e93dc12205ccdec1810bb71" or cdhash H"ba7e21f03d9b31090f684f4446e681b6eb316ffd"</string>
+		</dict>
+		<key>Resources/AppIcon.icns</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			PC5W5kkXjfhMVbccb65pDslRFhIWpifK0VpUotEQoYM=
+			</data>
 		</dict>
 	</dict>
 	<key>rules</key>

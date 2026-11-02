@@ -9,11 +9,13 @@
 /* Begin PBXBuildFile section */
 		AA010001 /* RequestlyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA010002 /* RequestlyApp.swift */; };
 		AA010003 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = AA010004 /* Info.plist */; };
+		AA010021 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = AA010022 /* AppIcon.icns */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		AA010002 /* RequestlyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestlyApp.swift; sourceTree = "<group>"; };
 		AA010004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA010022 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
 		AA010005 /* Requestly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Requestly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -49,6 +51,7 @@
 			isa = PBXGroup;
 			children = (
 				AA010004 /* Info.plist */,
+				AA010022 /* AppIcon.icns */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -115,6 +118,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA010003 /* Info.plist in Resources */,
+				AA010021 /* AppIcon.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,3 +262,4 @@
 	};
 	rootObject = AA010015 /* Project object */;
 }
+

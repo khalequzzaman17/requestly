@@ -80,3 +80,4 @@ Global application settings.
 - `PRAGMA foreign_keys = ON;` is enforced on every connection.
 - `PRAGMA journal_mode = WAL;` (Write-Ahead Logging) enables high concurrency and resilient crash recovery.
 - All multi-statement write operations run inside explicit `BEGIN TRANSACTION` / `COMMIT` / `ROLLBACK` blocks.
+

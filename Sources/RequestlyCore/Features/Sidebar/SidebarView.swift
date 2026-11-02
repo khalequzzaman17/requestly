@@ -11,13 +11,21 @@ public struct SidebarView: View {
         VStack(spacing: 0) {
             // App Header
             HStack(spacing: 10) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(DarkTheme.primaryBlue)
+                if let icon = NSImage(named: "AppIcon") ?? Bundle.main.image(forResource: "AppIcon") {
+                    Image(nsImage: icon)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
                         .frame(width: 28, height: 28)
-                    Image(systemName: "bolt.horizontal.fill")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.white)
+                        .cornerRadius(6)
+                } else {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(DarkTheme.primaryBlue)
+                            .frame(width: 28, height: 28)
+                        Image(systemName: "bolt.horizontal.fill")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.white)
+                    }
                 }
                 
                 VStack(alignment: .leading, spacing: 1) {

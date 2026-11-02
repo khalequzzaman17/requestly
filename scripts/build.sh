@@ -32,6 +32,7 @@ swiftc -O -parse-as-library \
 
 echo "Installing metadata and resources..."
 cp Resources/Info.plist "$CONTENTS_DIR/Info.plist"
+cp Resources/AppIcon.icns "$RESOURCES_DIR/AppIcon.icns"
 echo "APPL????" > "$CONTENTS_DIR/PkgInfo"
 
 echo "Signing application bundle..."

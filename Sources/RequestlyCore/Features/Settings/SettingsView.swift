@@ -274,13 +274,21 @@ public struct SettingsView: View {
                             
                         case .about:
                             VStack(spacing: 12) {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(DarkTheme.primaryBlue)
-                                        .frame(width: 56, height: 56)
-                                    Image(systemName: "bolt.horizontal.fill")
-                                        .font(.system(size: 28, weight: .bold))
-                                        .foregroundColor(.white)
+                                if let icon = NSImage(named: "AppIcon") ?? Bundle.main.image(forResource: "AppIcon") {
+                                    Image(nsImage: icon)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 64, height: 64)
+                                        .cornerRadius(14)
+                                } else {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(DarkTheme.primaryBlue)
+                                            .frame(width: 56, height: 56)
+                                        Image(systemName: "bolt.horizontal.fill")
+                                            .font(.system(size: 28, weight: .bold))
+                                            .foregroundColor(.white)
+                                    }
                                 }
                                 
                                 Text("Requestly for macOS")

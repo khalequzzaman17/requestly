@@ -52,6 +52,7 @@ rm -rf "$TMP_ARM" "$TMP_X86"
 
 echo "Installing metadata..."
 cp Resources/Info.plist "$CONTENTS_DIR/Info.plist"
+cp Resources/AppIcon.icns "$RESOURCES_DIR/AppIcon.icns"
 echo "APPL????" > "$CONTENTS_DIR/PkgInfo"
 
 echo "Signing Universal application bundle..."
