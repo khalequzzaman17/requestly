@@ -109,6 +109,7 @@ public struct EnvironmentManagerView: View {
                     .cornerRadius(6)
                 }
                 .buttonStyle(.plain)
+                .focusable(false)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
