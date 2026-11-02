@@ -201,27 +201,6 @@ public struct SettingsView: View {
                                     }
                                 }
                                 .toggleStyle(.switch)
-                                
-                                Divider().background(DarkTheme.borderSubtle)
-                                
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text("Appearance")
-                                            .font(AppTypography.bodyMedium)
-                                            .foregroundColor(DarkTheme.textPrimary)
-                                        Text("Requestly is permanently designed in Dark Mode for developers.")
-                                            .font(AppTypography.caption)
-                                            .foregroundColor(DarkTheme.textMuted)
-                                    }
-                                    Spacer()
-                                    Text("Dark Mode Only")
-                                        .font(AppTypography.captionMedium)
-                                        .foregroundColor(DarkTheme.textSecondary)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
-                                        .background(DarkTheme.elevatedBackground)
-                                        .cornerRadius(4)
-                                }
                             }
                             
                         case .network:

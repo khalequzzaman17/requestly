@@ -174,5 +174,14 @@ for (name, size) in iconSizes {
     savePNG(image: resized, path: "\(iconsetDir)/\(name)")
 }
 
-print("Iconset images generated successfully.")
+let iconutil = Process()
+iconutil.executableURL = URL(fileURLWithPath: "/usr/bin/iconutil")
+iconutil.arguments = ["-c", "icns", iconsetDir, "-o", "Resources/AppIcon.icns"]
+try? iconutil.run()
+iconutil.waitUntilExit()
+
+// Clean up intermediate iconset folder
+try? fileManager.removeItem(atPath: iconsetDir)
+
+print("✅ Successfully generated Resources/AppIcon.icns")
 

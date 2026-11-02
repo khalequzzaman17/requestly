@@ -30,6 +30,12 @@ mkdir -p "$MACOS_DIR" "$FRAMEWORKS_DIR" "$RESOURCES_DIR" "$TMP_ARM" "$TMP_X86"
 # Instruct macOS Spotlight to NEVER index the build output folder as an installed app
 touch "$BUILD_DIR/.metadata_never_index"
 
+# Generate application icon on-the-fly if needed
+if [ ! -f "Resources/AppIcon.icns" ] || [ "scripts/generate-icon.swift" -nt "Resources/AppIcon.icns" ]; then
+    echo "🎨 Generating application icon with generate-icon.swift..."
+    swift scripts/generate-icon.swift
+fi
+
 CORE_SRCS=$(find Sources/RequestlyCore -name '*.swift')
 APP_SRCS=$(find Sources/RequestlyApp -name '*.swift')
 

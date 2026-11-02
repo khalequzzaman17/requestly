@@ -22,11 +22,13 @@ DerivedData/
 *.dSYM/
 test-runner
 
-# Build Intermediates & Test Staging
-build/test/
-build/dmg_staging/
-build/tmp*/
-build/**/tmp_*
+# Build Output (Build on demand via ./scripts/build-universal.sh or ./scripts/build.sh)
+build/
+
+# Dynamically Generated App Icons (Generated during build via scripts/generate-icon.swift)
+Resources/AppIcon.icns
+Resources/AppIcon-1024.png
+Resources/AppIcon.iconset/
 
 # Local Environment & Sensitive Keys
 .env
