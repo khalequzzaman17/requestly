@@ -7,7 +7,7 @@
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
-    <string>com.requestly.macos</string>
+    <string>com.requestly.sysninja</string>
     <key>CFBundleName</key>
     <string>Requestly</string>
     <key>CFBundleDisplayName</key>

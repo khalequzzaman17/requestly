@@ -11,50 +11,14 @@
 	</dict>
 	<key>files2</key>
 	<dict>
-		<key>Frameworks/RequestlyCore.abi.json</key>
-		<dict>
-			<key>cdhash</key>
-			<data>
-			wFs67rwNL2dX7ilFz2uYX/FHj7g=
-			</data>
-			<key>requirement</key>
-			<string>cdhash H"c05b3aeebc0d2f6757ee2945cf6b985ff1478fb8"</string>
-		</dict>
-		<key>Frameworks/RequestlyCore.swiftdoc</key>
-		<dict>
-			<key>cdhash</key>
-			<data>
-			HSTdEuUyggR+WBuvwHfTr8z/2gI=
-			</data>
-			<key>requirement</key>
-			<string>cdhash H"1d24dd12e53282047e581bafc077d3afccffda02"</string>
-		</dict>
-		<key>Frameworks/RequestlyCore.swiftmodule</key>
-		<dict>
-			<key>cdhash</key>
-			<data>
-			OWyJD8nivK4Zj2HNeSYE+3Gjo3o=
-			</data>
-			<key>requirement</key>
-			<string>cdhash H"396c890fc9e2bcae198f61cd792604fb71a3a37a"</string>
-		</dict>
-		<key>Frameworks/RequestlyCore.swiftsourceinfo</key>
-		<dict>
-			<key>cdhash</key>
-			<data>
-			Qzum5GAWrVlcFd9c/TNFdY9Fc8k=
-			</data>
-			<key>requirement</key>
-			<string>cdhash H"433ba6e46016ad595c15df5cfd3345758f4573c9"</string>
-		</dict>
 		<key>Frameworks/libRequestlyCore.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			GdA4KxEYfsyI2X2f6rhdskGjbAw=
+			cbBhWDR3Rm+mHck1w67F+Ji8apg=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"19d0382b11187ecc88d97d9feab85db241a36c0c"</string>
+			<string>cdhash H"71b061583477466fa61dc935c3aec5f898bc6a98" or cdhash H"5d5b0adc1bb91b788b670850fc3f43a0bd2e952c"</string>
 		</dict>
 		<key>Resources/AppIcon.icns</key>
 		<dict>
