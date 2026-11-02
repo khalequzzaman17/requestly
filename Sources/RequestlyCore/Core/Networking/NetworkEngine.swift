@@ -18,6 +18,17 @@ public final class NetworkSessionDelegate: NSObject, URLSessionTaskDelegate, URL
         completionHandler: @escaping (URLRequest?) -> Void
     ) {
         if followRedirects {
+            // Security: Enforce safe HTTP / HTTPS scheme on redirect destination
+            guard let scheme = request.url?.scheme?.lowercased(),
+                  (scheme == "http" || scheme == "https") else {
+                completionHandler(nil)
+                return
+            }
+            // Security: Prevent HTTPS to plaintext HTTP downgrade attacks
+            if let oldScheme = response.url?.scheme?.lowercased(), oldScheme == "https", scheme == "http" {
+                completionHandler(nil)
+                return
+            }
             completionHandler(request)
         } else {
             completionHandler(nil)

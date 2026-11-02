@@ -41,7 +41,8 @@ public final class KeychainManager: KeychainServiceProtocol, @unchecked Sendable
         let status = SecItemCopyMatching(query as CFDictionary, nil)
         if status == errSecSuccess {
             let attributesToUpdate: [String: Any] = [
-                kSecValueData as String: data
+                kSecValueData as String: data,
+                kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
             ]
             let updateStatus = SecItemUpdate(query as CFDictionary, attributesToUpdate as CFDictionary)
             guard updateStatus == errSecSuccess else {
@@ -50,6 +51,7 @@ public final class KeychainManager: KeychainServiceProtocol, @unchecked Sendable
         } else if status == errSecItemNotFound {
             var newItem = query
             newItem[kSecValueData as String] = data
+            newItem[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
             let addStatus = SecItemAdd(newItem as CFDictionary, nil)
             guard addStatus == errSecSuccess else {
                 throw KeychainError.unhandledError(status: addStatus)
@@ -96,11 +98,18 @@ public final class KeychainManager: KeychainServiceProtocol, @unchecked Sendable
 }
 
 public enum CredentialSanitizer {
+    public static let sensitiveHeaderNames: Set<String> = [
+        "authorization", "proxy-authorization", "x-api-key", "api-key",
+        "apikey", "token", "x-token", "x-auth-token", "x-access-token",
+        "secret", "cookie", "set-cookie", "private-key", "client-secret",
+        "access_token", "id_token", "refresh_token"
+    ]
+    
     public static func sanitize(headers: [KeyValueItem]) -> [KeyValueItem] {
-        let sensitiveKeys = ["authorization", "proxy-authorization", "x-api-key", "api-key", "token", "secret", "cookie"]
         return headers.map { item in
             var sanitized = item
-            if sensitiveKeys.contains(item.key.lowercased()) {
+            let lowerKey = item.key.trimmingCharacters(in: .whitespaces).lowercased()
+            if sensitiveHeaderNames.contains(lowerKey) || lowerKey.contains("secret") || lowerKey.contains("password") {
                 sanitized.value = "••••••••"
             }
             return sanitized

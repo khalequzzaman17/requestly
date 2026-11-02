@@ -13,6 +13,7 @@ public struct AppSettingsModel: Codable, Equatable {
     public var defaultTimeout: TimeInterval
     public var followRedirects: Bool
     public var validateSSL: Bool
+    public var enforceHttpsOnly: Bool
     public var customUserAgent: String
     
     // Editor Settings
@@ -27,9 +28,11 @@ public struct AppSettingsModel: Codable, Equatable {
     public var maxResponseSizeMB: Int
     public var autoFormatJSON: Bool
     
-    // Storage Settings
+    // Storage & Security Settings
     public var historyRetentionDays: Int
     public var maxHistoryItems: Int
+    public var redactCredentialsInHistory: Bool
+    public var sanitizeSecretsInCurl: Bool
     
     public init(
         defaultMethod: String = "GET",
@@ -41,6 +44,7 @@ public struct AppSettingsModel: Codable, Equatable {
         defaultTimeout: TimeInterval = 30.0,
         followRedirects: Bool = true,
         validateSSL: Bool = true,
+        enforceHttpsOnly: Bool = false,
         customUserAgent: String = "Requestly/1.0 (macOS)",
         editorFontSize: Double = 13.0,
         tabWidth: Int = 2,
@@ -51,7 +55,9 @@ public struct AppSettingsModel: Codable, Equatable {
         maxResponseSizeMB: Int = 50,
         autoFormatJSON: Bool = true,
         historyRetentionDays: Int = 30,
-        maxHistoryItems: Int = 500
+        maxHistoryItems: Int = 500,
+        redactCredentialsInHistory: Bool = true,
+        sanitizeSecretsInCurl: Bool = false
     ) {
         self.defaultMethod = defaultMethod
         self.confirmCloseDirtyTabs = confirmCloseDirtyTabs
@@ -62,6 +68,7 @@ public struct AppSettingsModel: Codable, Equatable {
         self.defaultTimeout = defaultTimeout
         self.followRedirects = followRedirects
         self.validateSSL = validateSSL
+        self.enforceHttpsOnly = enforceHttpsOnly
         self.customUserAgent = customUserAgent
         self.editorFontSize = editorFontSize
         self.tabWidth = tabWidth
@@ -73,5 +80,7 @@ public struct AppSettingsModel: Codable, Equatable {
         self.autoFormatJSON = autoFormatJSON
         self.historyRetentionDays = historyRetentionDays
         self.maxHistoryItems = maxHistoryItems
+        self.redactCredentialsInHistory = redactCredentialsInHistory
+        self.sanitizeSecretsInCurl = sanitizeSecretsInCurl
     }
 }

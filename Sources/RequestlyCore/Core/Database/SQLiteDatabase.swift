@@ -40,6 +40,7 @@ public final class SQLiteDatabase {
         self.db = dbPointer
         try execute(sql: "PRAGMA foreign_keys = ON;")
         try execute(sql: "PRAGMA journal_mode = WAL;")
+        try execute(sql: "PRAGMA secure_delete = ON;")
     }
     
     deinit {
@@ -143,25 +144,27 @@ public final class SQLiteDatabase {
         }
     }
     
+    private let sqliteTransient = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
+    
     private func bind(params: [Any], to stmt: OpaquePointer?) throws {
         for (index, param) in params.enumerated() {
             let col = Int32(index + 1)
             if let stringVal = param as? String {
-                sqlite3_bind_text(stmt, col, (stringVal as NSString).utf8String, -1, nil)
+                sqlite3_bind_text(stmt, col, (stringVal as NSString).utf8String, -1, sqliteTransient)
             } else if let intVal = param as? Int {
                 sqlite3_bind_int64(stmt, col, Int64(intVal))
             } else if let doubleVal = param as? Double {
                 sqlite3_bind_double(stmt, col, doubleVal)
             } else if let dataVal = param as? Data {
                 _ = dataVal.withUnsafeBytes { buffer in
-                    sqlite3_bind_blob(stmt, col, buffer.baseAddress, Int32(dataVal.count), nil)
+                    sqlite3_bind_blob(stmt, col, buffer.baseAddress, Int32(dataVal.count), sqliteTransient)
                 }
             } else if let boolVal = param as? Bool {
                 sqlite3_bind_int(stmt, col, boolVal ? 1 : 0)
             } else if param is NSNull {
                 sqlite3_bind_null(stmt, col)
             } else {
-                sqlite3_bind_text(stmt, col, "\(param)", -1, nil)
+                sqlite3_bind_text(stmt, col, "\(param)", -1, sqliteTransient)
             }
         }
     }

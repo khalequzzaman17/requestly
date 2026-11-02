@@ -8,6 +8,10 @@ public enum NetworkError: LocalizedError {
     case sslCertificateError(String)
     case fileNotFound(String)
     case encodingFailed(String)
+    case insecureSchemeBlocked(String)
+    case responseTooLarge(Int)
+    case unsafeRedirect(String)
+    case fileAccessRestricted(String)
     
     public var errorDescription: String? {
         switch self {
@@ -25,6 +29,14 @@ public enum NetworkError: LocalizedError {
             return "File not found: \(path)"
         case .encodingFailed(let msg):
             return "Encoding error: \(msg)"
+        case .insecureSchemeBlocked(let msg):
+            return "Insecure protocol blocked: \(msg)"
+        case .responseTooLarge(let maxMB):
+            return "Response payload exceeded the configured maximum size limit (\(maxMB) MB). Execution safely halted."
+        case .unsafeRedirect(let url):
+            return "Unsafe redirection blocked: attempted redirect to \(url)"
+        case .fileAccessRestricted(let reason):
+            return "File access restricted: \(reason)"
         }
     }
 }
