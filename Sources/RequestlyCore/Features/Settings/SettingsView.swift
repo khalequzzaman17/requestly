@@ -3,6 +3,7 @@ import SwiftUI
 public enum SettingsSection: String, CaseIterable, Identifiable {
     case general = "General"
     case network = "Network"
+    case security = "Security"
     case editor = "Editor"
     case response = "Response"
     case storage = "Storage"
@@ -15,6 +16,7 @@ public enum SettingsSection: String, CaseIterable, Identifiable {
         switch self {
         case .general: return "gearshape"
         case .network: return "network"
+        case .security: return "lock.shield"
         case .editor: return "pencil"
         case .response: return "arrow.down.doc"
         case .storage: return "cylinder.split.1x2"
@@ -291,6 +293,113 @@ public struct SettingsView: View {
                                         .font(AppTypography.caption)
                                         .foregroundColor(DarkTheme.textMuted)
                                 }
+                            }
+                            
+                        case .security:
+                            VStack(alignment: .leading, spacing: 16) {
+                                Text("Security & Privacy Preferences")
+                                    .font(AppTypography.headline)
+                                    .foregroundColor(DarkTheme.textPrimary)
+                                
+                                Text("Requestly adheres to a local-first, zero-telemetry architecture with strict cryptographic and memory safeguards.")
+                                    .font(AppTypography.caption)
+                                    .foregroundColor(DarkTheme.textMuted)
+                                
+                                Toggle(isOn: $viewModel.settings.enforceHttpsOnly) {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Enforce HTTPS Only")
+                                            .font(AppTypography.bodyMedium)
+                                            .foregroundColor(DarkTheme.textPrimary)
+                                        Text("Disallow unencrypted HTTP traffic (except localhost / 127.0.0.1 for local API development).")
+                                            .font(AppTypography.caption)
+                                            .foregroundColor(DarkTheme.textMuted)
+                                    }
+                                }
+                                .toggleStyle(.switch)
+                                
+                                Toggle(isOn: $viewModel.settings.validateSSL) {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Validate SSL / TLS Certificates")
+                                            .font(AppTypography.bodyMedium)
+                                            .foregroundColor(DarkTheme.textPrimary)
+                                        Text("Verify trust chains with Apple system roots. Prevents man-in-the-middle attacks.")
+                                            .font(AppTypography.caption)
+                                            .foregroundColor(DarkTheme.textMuted)
+                                    }
+                                }
+                                .toggleStyle(.switch)
+                                
+                                Toggle(isOn: $viewModel.settings.redactCredentialsInHistory) {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Redact Credentials in Request History")
+                                            .font(AppTypography.bodyMedium)
+                                            .foregroundColor(DarkTheme.textPrimary)
+                                        Text("Mask bearer tokens, passwords, and API keys before writing to local SQLite database.")
+                                            .font(AppTypography.caption)
+                                            .foregroundColor(DarkTheme.textMuted)
+                                    }
+                                }
+                                .toggleStyle(.switch)
+                                
+                                Toggle(isOn: $viewModel.settings.sanitizeSecretsInCurl) {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Redact Secrets When Copying cURL")
+                                            .font(AppTypography.bodyMedium)
+                                            .foregroundColor(DarkTheme.textPrimary)
+                                        Text("Sanitize authorization headers and API keys in exported cURL commands.")
+                                            .font(AppTypography.caption)
+                                            .foregroundColor(DarkTheme.textMuted)
+                                    }
+                                }
+                                .toggleStyle(.switch)
+                                
+                                Divider().background(DarkTheme.borderSubtle)
+                                
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Active Defenses")
+                                        .font(AppTypography.captionMedium)
+                                        .foregroundColor(DarkTheme.textSecondary)
+                                    
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "key.fill")
+                                            .foregroundColor(DarkTheme.warningYellow)
+                                            .font(.system(size: 11))
+                                        Text("macOS Keychain: Hardware encrypted with FirstUnlockThisDeviceOnly")
+                                            .font(AppTypography.caption)
+                                            .foregroundColor(DarkTheme.textMuted)
+                                    }
+                                    
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "shield.lefthalf.filled")
+                                            .foregroundColor(DarkTheme.successGreen)
+                                            .font(.system(size: 11))
+                                        Text("Hardened Runtime: JIT-safe, no unauthorized memory execution, sandboxed file access")
+                                            .font(AppTypography.caption)
+                                            .foregroundColor(DarkTheme.textMuted)
+                                    }
+                                    
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "cylinder.split.1x2")
+                                            .foregroundColor(DarkTheme.primaryBlue)
+                                            .font(.system(size: 11))
+                                        Text("SQLite Zeroization: PRAGMA secure_delete wipes deleted records from disk")
+                                            .font(AppTypography.caption)
+                                            .foregroundColor(DarkTheme.textMuted)
+                                    }
+                                    
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "network.badge.shield.half.filled")
+                                            .foregroundColor(DarkTheme.successGreen)
+                                            .font(.system(size: 11))
+                                        Text("Scheme Guard: Strict HTTP/HTTPS filter blocks protocol smuggling and file:// access")
+                                            .font(AppTypography.caption)
+                                            .foregroundColor(DarkTheme.textMuted)
+                                    }
+                                }
+                                .padding(12)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(DarkTheme.elevatedBackground)
+                                .cornerRadius(6)
                             }
                             
                         case .editor:

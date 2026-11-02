@@ -28,11 +28,17 @@ public final class RequestlyCollectionExportImport {
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
     }
     
-    public func export(collection: CollectionModel, folders: [FolderModel], requests: [SavedRequestModel]) throws -> Data {
+    public func export(collection: CollectionModel, folders: [FolderModel], requests: [SavedRequestModel], sanitizeSecrets: Bool = false) throws -> Data {
+        let exportRequests = sanitizeSecrets ? requests.map { saved -> SavedRequestModel in
+            var copy = saved
+            copy.request = CredentialSanitizer.sanitize(request: saved.request)
+            return copy
+        } : requests
+        
         let archive = RequestlyCollectionArchive(
             collection: collection,
             folders: folders,
-            requests: requests
+            requests: exportRequests
         )
         return try encoder.encode(archive)
     }

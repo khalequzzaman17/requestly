@@ -55,8 +55,8 @@ cp Resources/Info.plist "$CONTENTS_DIR/Info.plist"
 cp Resources/AppIcon.icns "$RESOURCES_DIR/AppIcon.icns"
 echo "APPL????" > "$CONTENTS_DIR/PkgInfo"
 
-echo "Signing Universal application bundle..."
-codesign --force --deep -s - "$APP_BUNDLE"
+echo "Signing Universal application bundle with Hardened Runtime..."
+codesign --force --deep --options runtime --entitlements Resources/Requestly.entitlements -s - "$APP_BUNDLE"
 
 echo "Verifying Universal architectures:"
 lipo -info "$MACOS_DIR/Requestly"
