@@ -42,19 +42,19 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			9xGTty1Nzr5uot2fmIMLUxLuOCU=
+			Qzum5GAWrVlcFd9c/TNFdY9Fc8k=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"f71193b72d4dcebe6ea2dd9f98830b5312ee3825"</string>
+			<string>cdhash H"433ba6e46016ad595c15df5cfd3345758f4573c9"</string>
 		</dict>
 		<key>Frameworks/libRequestlyCore.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			lkRGKE1fTpZRZgrIwGhVV1ik6m4=
+			GdA4KxEYfsyI2X2f6rhdskGjbAw=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"964446284d5f4e9651660ac8c068555758a4ea6e"</string>
+			<string>cdhash H"19d0382b11187ecc88d97d9feab85db241a36c0c"</string>
 		</dict>
 		<key>Resources/AppIcon.icns</key>
 		<dict>

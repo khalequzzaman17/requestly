@@ -6,12 +6,14 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         // Enforce dark mode permanently across entire NSApplication
         AppearanceManager.enforceDarkMode()
         
-        if let window = NSApplication.shared.windows.first {
-            window.title = "Requestly"
-            window.backgroundColor = DarkTheme.nsMainBackground
-            window.titlebarAppearsTransparent = true
-            window.titleVisibility = .hidden
-            window.toolbarStyle = .unified
+        DispatchQueue.main.async {
+            for window in NSApplication.shared.windows {
+                window.title = "Requestly"
+                window.backgroundColor = DarkTheme.nsMainBackground
+                window.titlebarAppearsTransparent = true
+                window.titleVisibility = .hidden
+                window.toolbarStyle = .unified
+            }
         }
     }
     

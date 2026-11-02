@@ -3,7 +3,7 @@ import AppKit
 
 public enum AppearanceManager {
     public static func enforceDarkMode() {
-        NSApp.appearance = NSAppearance(named: .darkAqua)
+        NSApplication.shared.appearance = NSAppearance(named: .darkAqua)
     }
 }
 
