@@ -103,6 +103,11 @@ public final class JSONTreeParser {
     }
     
     private func buildNode(key: String?, value: Any, depth: Int, defaultExpandedDepth: Int) -> JSONTreeNode {
+        // Security: Prevent stack overflow from excessively nested JSON payloads
+        if depth > 64 {
+            return JSONTreeNode(key: key, nodeType: .string("[Nesting depth exceeded maximum safety limit (64)]"), depth: depth, isExpanded: false)
+        }
+        
         let isExpanded = depth < defaultExpandedDepth
         
         if let dict = value as? [String: Any] {

@@ -112,6 +112,9 @@ public final class ExecuteRequestUseCase {
         let shouldSaveHistory = settings?.saveToHistoryAutomatically ?? true
         
         if shouldSaveHistory {
+            let shouldRedact = settings?.redactCredentialsInHistory ?? true
+            let snapshot = shouldRedact ? CredentialSanitizer.sanitize(request: request) : request
+            
             let historyItem = RequestHistoryItem(
                 requestName: request.name,
                 method: request.method,
@@ -121,7 +124,7 @@ public final class ExecuteRequestUseCase {
                 durationMs: response.durationMs,
                 byteCount: response.byteCount,
                 timestamp: Date(),
-                requestSnapshot: request
+                requestSnapshot: snapshot
             )
             try? databaseService.addHistoryItem(historyItem)
         }

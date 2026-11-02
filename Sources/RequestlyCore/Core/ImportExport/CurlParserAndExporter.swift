@@ -118,7 +118,8 @@ public final class CurlParserAndExporter {
     
     // MARK: - cURL Export
     
-    public func export(request: HTTPRequestModel) -> String {
+    public func export(request req: HTTPRequestModel, sanitizeSecrets: Bool = false) -> String {
+        let request = sanitizeSecrets ? CredentialSanitizer.sanitize(request: req) : req
         var parts: [String] = ["curl"]
         
         // Method
@@ -126,12 +127,12 @@ public final class CurlParserAndExporter {
         
         // URL
         let resolvedURL = URLValidator.updateURL(request.url, withQueryParams: request.queryParams)
-        parts.append("'\(resolvedURL)'")
+        parts.append(shellQuote(resolvedURL))
         
         // Headers
         for header in request.headers where header.isEnabled && !header.key.isEmpty {
-            let escapedVal = header.value.replacingOccurrences(of: "'", with: "'\\''")
-            parts.append("-H '\(header.key): \(escapedVal)'")
+            let headerString = "\(header.key): \(header.value)"
+            parts.append("-H \(shellQuote(headerString))")
         }
         
         // Auth
@@ -140,17 +141,17 @@ public final class CurlParserAndExporter {
             break
         case .bearer:
             if !request.auth.bearerToken.isEmpty {
-                parts.append("-H 'Authorization: Bearer \(request.auth.bearerToken)'")
+                parts.append("-H \(shellQuote("Authorization: Bearer \(request.auth.bearerToken)"))")
             }
         case .basic:
-            parts.append("-u '\(request.auth.basicUsername):\(request.auth.basicPassword)'")
+            parts.append("-u \(shellQuote("\(request.auth.basicUsername):\(request.auth.basicPassword)"))")
         case .apiKey:
             if request.auth.apiKeyLocation == .header && !request.auth.apiKeyName.isEmpty {
-                parts.append("-H '\(request.auth.apiKeyName): \(request.auth.apiKeyValue)'")
+                parts.append("-H \(shellQuote("\(request.auth.apiKeyName): \(request.auth.apiKeyValue)"))")
             }
         case .oauth2:
             if !request.auth.oauthToken.isEmpty {
-                parts.append("-H 'Authorization: Bearer \(request.auth.oauthToken)'")
+                parts.append("-H \(shellQuote("Authorization: Bearer \(request.auth.oauthToken)"))")
             }
         }
         
@@ -161,31 +162,33 @@ public final class CurlParserAndExporter {
                 break
             case .json, .text:
                 if !request.rawBodyText.isEmpty {
-                    let escapedBody = request.rawBodyText.replacingOccurrences(of: "'", with: "'\\''")
-                    parts.append("-d '\(escapedBody)'")
+                    parts.append("-d \(shellQuote(request.rawBodyText))")
                 }
             case .urlEncoded:
                 let enabledItems = request.urlEncodedItems.filter { $0.isEnabled && !$0.key.isEmpty }
                 for item in enabledItems {
-                    let escaped = "\(item.key)=\(item.value)".replacingOccurrences(of: "'", with: "'\\''")
-                    parts.append("--data-urlencode '\(escaped)'")
+                    parts.append("--data-urlencode \(shellQuote("\(item.key)=\(item.value)"))")
                 }
             case .formData:
                 for item in request.formDataItems where item.isEnabled && !item.key.isEmpty {
                     if item.isFile, let path = item.filePath {
-                        parts.append("-F '\(item.key)=@\(path)'")
+                        parts.append("-F \(shellQuote("\(item.key)=@\(path)"))")
                     } else {
-                        parts.append("-F '\(item.key)=\(item.value)'")
+                        parts.append("-F \(shellQuote("\(item.key)=\(item.value)"))")
                     }
                 }
             case .binary:
                 if let path = request.binaryFilePath {
-                    parts.append("--data-binary '@\(path)'")
+                    parts.append("--data-binary \(shellQuote("@\(path)"))")
                 }
             }
         }
         
         return parts.joined(separator: " \\\n  ")
+    }
+    
+    private func shellQuote(_ string: String) -> String {
+        return "'" + string.replacingOccurrences(of: "'", with: "'\\''") + "'"
     }
     
     // MARK: - Tokenizer helper

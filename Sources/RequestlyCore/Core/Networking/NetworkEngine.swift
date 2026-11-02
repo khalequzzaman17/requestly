@@ -62,6 +62,27 @@ public final class NetworkEngine: NetworkServiceProtocol, @unchecked Sendable {
             throw NetworkError.invalidURL(request.url)
         }
         
+        // Security: Scheme validation - reject non-HTTP/HTTPS (e.g. file://, javascript:, data:)
+        guard let scheme = url.scheme?.lowercased(), (scheme == "http" || scheme == "https") else {
+            throw NetworkError.insecureSchemeBlocked("Unsupported or prohibited scheme: '\(url.scheme ?? "")'. Only HTTP and HTTPS are permitted.")
+        }
+        
+        let settings = try? DatabaseService.shared.loadSettings()
+        
+        // Security: Enforce HTTPS Only policy
+        if settings?.enforceHttpsOnly == true && scheme == "http" {
+            let host = url.host?.lowercased() ?? ""
+            let isLocal = host == "localhost" || host == "127.0.0.1" || host == "::1"
+            if !isLocal {
+                throw NetworkError.insecureSchemeBlocked("Insecure HTTP blocked by 'Enforce HTTPS Only' policy. Target: \(request.url)")
+            }
+        }
+        
+        // Security: Host validation
+        guard let host = url.host, !host.isEmpty else {
+            throw NetworkError.invalidURL("Missing or invalid host in URL: \(request.url)")
+        }
+        
         // Build URL with query params
         var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
         let enabledQueryParams = request.queryParams.filter { $0.isEnabled && !$0.key.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -165,9 +186,9 @@ public final class NetworkEngine: NetworkServiceProtocol, @unchecked Sendable {
             case .formData:
                 let builder = MultipartFormDataBuilder()
                 for item in request.formDataItems where item.isEnabled && !item.key.isEmpty {
-                    if item.isFile, let path = item.filePath, FileManager.default.fileExists(atPath: path) {
+                    if item.isFile, let path = item.filePath {
                         let filename = URL(fileURLWithPath: path).lastPathComponent
-                        let fileData = (try? Data(contentsOf: URL(fileURLWithPath: path))) ?? Data()
+                        let fileData = try safeReadFile(at: path)
                         builder.addFile(name: item.key, filename: filename, mimeType: "application/octet-stream", fileData: fileData)
                     } else {
                         builder.addField(name: item.key, value: item.value)
@@ -177,8 +198,8 @@ public final class NetworkEngine: NetworkServiceProtocol, @unchecked Sendable {
                 urlRequest.httpBody = bodyData
                 urlRequest.setValue("multipart/form-data; boundary=\(builder.boundary)", forHTTPHeaderField: "Content-Type")
             case .binary:
-                if let path = request.binaryFilePath, FileManager.default.fileExists(atPath: path) {
-                    let fileData = try Data(contentsOf: URL(fileURLWithPath: path))
+                if let path = request.binaryFilePath {
+                    let fileData = try safeReadFile(at: path)
                     urlRequest.httpBody = fileData
                     if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
                         urlRequest.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
@@ -192,7 +213,8 @@ public final class NetworkEngine: NetworkServiceProtocol, @unchecked Sendable {
             validateSSL: request.validateSSL
         )
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = request.timeoutInterval
+        let safeTimeout = min(max(request.timeoutInterval, 1.0), 300.0)
+        config.timeoutIntervalForRequest = safeTimeout
         config.httpShouldSetCookies = true
         let session = URLSession(configuration: config, delegate: delegate, delegateQueue: nil)
         
@@ -201,6 +223,11 @@ public final class NetworkEngine: NetworkServiceProtocol, @unchecked Sendable {
         return try await withTaskCancellationHandler {
             do {
                 let (data, response) = try await session.data(for: urlRequest)
+                let maxMB = settings?.maxResponseSizeMB ?? 50
+                let maxBytes = maxMB * 1024 * 1024
+                if data.count > maxBytes {
+                    throw NetworkError.responseTooLarge(maxMB)
+                }
                 let endTime = CFAbsoluteTimeGetCurrent()
                 let durationMs = (endTime - startTime) * 1000.0
                 
@@ -265,7 +292,9 @@ public final class NetworkEngine: NetworkServiceProtocol, @unchecked Sendable {
                     timestamp: Date()
                 )
             } catch {
-                if (error as NSError).code == NSURLErrorCancelled {
+                if let netErr = error as? NetworkError {
+                    throw netErr
+                } else if (error as NSError).code == NSURLErrorCancelled {
                     throw NetworkError.cancelled
                 } else if (error as NSError).code == NSURLErrorTimedOut {
                     throw NetworkError.timeout
@@ -276,6 +305,18 @@ public final class NetworkEngine: NetworkServiceProtocol, @unchecked Sendable {
         } onCancel: {
             self.cancel(requestId: request.id)
         }
+    }
+    
+    private func safeReadFile(at path: String) throws -> Data {
+        var isDir: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: path, isDirectory: &isDir), !isDir.boolValue else {
+            throw NetworkError.fileAccessRestricted("Target is not a valid regular file: \(path)")
+        }
+        let attributes = (try? FileManager.default.attributesOfItem(atPath: path)) ?? [:]
+        if let size = attributes[.size] as? UInt64, size > 100 * 1024 * 1024 {
+            throw NetworkError.fileAccessRestricted("File size exceeds 100MB upload limit: \(path)")
+        }
+        return try Data(contentsOf: URL(fileURLWithPath: path))
     }
     
     public func cancel(requestId: UUID) {

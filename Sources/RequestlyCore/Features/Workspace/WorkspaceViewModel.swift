@@ -209,7 +209,8 @@ public final class WorkspaceViewModel: ObservableObject {
     
     public func copyActiveRequestCurl() {
         guard let editorVM = activeEditorViewModel else { return }
-        let curl = CurlParserAndExporter.shared.export(request: editorVM.request)
+        let shouldSanitize = (try? databaseService.loadSettings())?.sanitizeSecretsInCurl ?? false
+        let curl = CurlParserAndExporter.shared.export(request: editorVM.request, sanitizeSecrets: shouldSanitize)
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.setString(curl, forType: .string)
