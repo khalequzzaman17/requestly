@@ -63,5 +63,75 @@ public enum SecurityAndVariableTests {
             try TestHarness.assertTrue(unresolved.contains("missing_var_2"))
             try TestHarness.assertFalse(unresolved.contains("known_var"))
         }
+        
+        await TestHarness.runTest("Insecure URL Schemes Blocked by NetworkEngine") {
+            let engine = NetworkEngine.shared
+            
+            do {
+                _ = try await engine.execute(request: HTTPRequestModel(url: "file:///etc/passwd"))
+                try TestHarness.assertTrue(false, "Expected error for file:// scheme")
+            } catch let error as NetworkError {
+                switch error {
+                case .insecureSchemeBlocked:
+                    try TestHarness.assertTrue(true)
+                default:
+                    try TestHarness.assertTrue(false, "Expected insecureSchemeBlocked but got \(error)")
+                }
+            } catch {
+                try TestHarness.assertTrue(false, "Unexpected error: \(error)")
+            }
+        }
+        
+        await TestHarness.runTest("cURL Command Injection Prevention via Shell Quoting") {
+            let maliciousUrl = "https://example.com/api?q=test'; rm -rf /; echo '"
+            let maliciousHeader = "evil'; id; '"
+            let req = HTTPRequestModel(
+                url: maliciousUrl,
+                headers: [KeyValueItem(key: "X-Exploit", value: maliciousHeader, isEnabled: true)],
+                auth: AuthConfig(type: .bearer, bearerToken: "token'; whoami; '")
+            )
+            
+            let curl = CurlParserAndExporter.shared.export(request: req)
+            // Verify single quotes are escaped properly as '\'' so bash cannot break out
+            try TestHarness.assertTrue(curl.contains("'\\''"))
+            try TestHarness.assertTrue(!curl.contains("test'; rm -rf /; echo '"))
+        }
+        
+        await TestHarness.runTest("cURL Secret Redaction on Demand") {
+            let req = HTTPRequestModel(
+                url: "https://api.example.com/v1",
+                headers: [
+                    KeyValueItem(key: "Authorization", value: "Bearer secret_prod_key_999", isEnabled: true),
+                    KeyValueItem(key: "X-Api-Key", value: "live_secret_456", isEnabled: true)
+                ]
+            )
+            
+            let safeCurl = CurlParserAndExporter.shared.export(request: req, sanitizeSecrets: true)
+            try TestHarness.assertTrue(safeCurl.contains("••••••••"))
+            try TestHarness.assertFalse(safeCurl.contains("secret_prod_key_999"))
+            try TestHarness.assertFalse(safeCurl.contains("live_secret_456"))
+        }
+        
+        await TestHarness.runTest("JSON Tree Parser Recursion Depth Safety Guard") {
+            // Build deeply nested JSON: {"a":{"a":{"a": ... }}}
+            var nested = "{\"val\": 1}"
+            for _ in 0..<80 {
+                nested = "{\"wrap\": \(nested)}"
+            }
+            
+            let root = try JSONTreeParser.shared.parse(string: nested)
+            try TestHarness.assertEqual(root.depth, 0)
+            // Traversing down must encounter the depth guard without crashing the thread
+            var current = root
+            var reachedGuard = false
+            while let firstChild = current.children.first {
+                current = firstChild
+                if case .string(let str) = current.nodeType, str.contains("Nesting depth exceeded") {
+                    reachedGuard = true
+                    break
+                }
+            }
+            try TestHarness.assertTrue(reachedGuard, "Expected depth safety guard to halt recursion")
+        }
     }
 }

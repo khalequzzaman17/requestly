@@ -109,7 +109,6 @@ public final class NetworkEngine: NetworkServiceProtocol, @unchecked Sendable {
         urlRequest.httpMethod = request.method.rawValue
         urlRequest.timeoutInterval = request.timeoutInterval
         
-        let settings = try? DatabaseService.shared.loadSettings()
         let trimWhitespace = settings?.trimWhitespaceInHeaders ?? true
         
         // Apply Headers

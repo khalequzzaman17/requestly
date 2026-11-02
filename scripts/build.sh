@@ -36,6 +36,7 @@ cp Resources/AppIcon.icns "$RESOURCES_DIR/AppIcon.icns"
 echo "APPL????" > "$CONTENTS_DIR/PkgInfo"
 
 echo "Signing application bundle with Hardened Runtime..."
-codesign --force --deep --options runtime --entitlements Resources/Requestly.entitlements -s - "$APP_BUNDLE"
+codesign --force --options runtime --entitlements Resources/Requestly.entitlements -s - "$FRAMEWORKS_DIR/libRequestlyCore.dylib"
+codesign --force --options runtime --entitlements Resources/Requestly.entitlements -s - "$APP_BUNDLE"
 
 echo "✅ Successfully built: $APP_BUNDLE"

@@ -12,12 +12,12 @@
     <key>com.apple.security.files.user-selected.read-write</key>
     <true/>
     
-    <!-- Hardened Runtime Protections -->
+    <!-- Hardened Runtime Protections (Allow ad-hoc bundle dylib validation for local builds) -->
     <key>com.apple.security.cs.allow-jit</key>
     <true/>
     <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
     <false/>
     <key>com.apple.security.cs.disable-library-validation</key>
-    <false/>
+    <true/>
 </dict>
 </plist>
