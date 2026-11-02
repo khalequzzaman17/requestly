@@ -13,8 +13,9 @@ MACOS_DIR="$CONTENTS_DIR/MacOS"
 FRAMEWORKS_DIR="$CONTENTS_DIR/Frameworks"
 RESOURCES_DIR="$CONTENTS_DIR/Resources"
 
-rm -rf "$APP_BUNDLE"
+rm -rf "$APP_BUNDLE" "$DIR/build/universal"
 mkdir -p "$MACOS_DIR" "$FRAMEWORKS_DIR" "$RESOURCES_DIR"
+touch "$BUILD_DIR/.metadata_never_index"
 
 CORE_SRCS=$(find Sources/RequestlyCore -name '*.swift')
 APP_SRCS=$(find Sources/RequestlyApp -name '*.swift')

@@ -6,18 +6,29 @@ cd "$DIR"
 
 echo "🌐 Building Requestly Universal 2 Binary (arm64 + x86_64)..."
 
-BUILD_DIR="$DIR/build/universal"
+LSREGISTER="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
+
+# Unregister any existing build apps from LaunchServices
+$LSREGISTER -u "$DIR/build/Requestly.app" 2>/dev/null || true
+$LSREGISTER -u "$DIR/build/universal/Requestly.app" 2>/dev/null || true
+
+BUILD_DIR="$DIR/build"
 APP_BUNDLE="$BUILD_DIR/Requestly.app"
 CONTENTS_DIR="$APP_BUNDLE/Contents"
 MACOS_DIR="$CONTENTS_DIR/MacOS"
 FRAMEWORKS_DIR="$CONTENTS_DIR/Frameworks"
 RESOURCES_DIR="$CONTENTS_DIR/Resources"
 
-TMP_ARM="$BUILD_DIR/tmp_arm64"
-TMP_X86="$BUILD_DIR/tmp_x86_64"
+TMP_BUILD="$BUILD_DIR/tmp_compile"
+TMP_ARM="$TMP_BUILD/arm64"
+TMP_X86="$TMP_BUILD/x86_64"
 
-rm -rf "$BUILD_DIR"
+# Clean up duplicate paths and temporary directories completely
+rm -rf "$APP_BUNDLE" "$DIR/build/universal" "$TMP_BUILD"
 mkdir -p "$MACOS_DIR" "$FRAMEWORKS_DIR" "$RESOURCES_DIR" "$TMP_ARM" "$TMP_X86"
+
+# Instruct macOS Spotlight to NEVER index the build output folder as an installed app
+touch "$BUILD_DIR/.metadata_never_index"
 
 CORE_SRCS=$(find Sources/RequestlyCore -name '*.swift')
 APP_SRCS=$(find Sources/RequestlyApp -name '*.swift')
@@ -48,7 +59,7 @@ echo "Merging binaries with lipo into Universal 2..."
 lipo -create "$TMP_ARM/libRequestlyCore.dylib" "$TMP_X86/libRequestlyCore.dylib" -output "$FRAMEWORKS_DIR/libRequestlyCore.dylib"
 lipo -create "$TMP_ARM/Requestly" "$TMP_X86/Requestly" -output "$MACOS_DIR/Requestly"
 
-rm -rf "$TMP_ARM" "$TMP_X86"
+rm -rf "$TMP_BUILD"
 
 echo "Installing metadata..."
 cp Resources/Info.plist "$CONTENTS_DIR/Info.plist"
@@ -63,4 +74,4 @@ echo "Verifying Universal architectures:"
 lipo -info "$MACOS_DIR/Requestly"
 lipo -info "$FRAMEWORKS_DIR/libRequestlyCore.dylib"
 
-echo "✅ Successfully built Universal 2 Application: $APP_BUNDLE"
+echo "✅ Successfully built single Universal 2 Application: $APP_BUNDLE"
